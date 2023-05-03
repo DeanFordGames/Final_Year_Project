@@ -1,0 +1,69 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+
+//flux values: x = left, y = right, z = top, w = bottom
+RWTexture2D<float4> flux;
+RWTexture2D<float2> velocityField;
+RWTexture2D<float4> terrain;
+
+float l;
+float dTime;
+
+//current elevation scale
+float scale;
+
+//acquire in-flux from neighbour cells
+float4 acquireNeighbor(uint3 id)
+{
+	float nl = flux[uint2(id.x - 1, id.y)].y;
+	float nr = flux[uint2(id.x + 1, id.y)].x;
+	float nt = flux[uint2(id.x, id.y + 1)].w;
+	float nb = flux[uint2(id.x, id.y - 1)].z;
+	float4 n = float4(nl, nr, nt, nb);
+
+	return n;
+}
+
+//calculate volume change
+float computeVolumeDiff(uint3 id, float4 n)
+{
+	float fi = (n.x + n.y + n.z + n.w);
+	float fo = (flux[id.xy].x + flux[id.xy].y + flux[id.xy].z + flux[id.xy].w);
+	float vd = (fi - fo);
+
+	return vd;
+}
+
+//calculate new water height
+void computeNewHeight(uint3 id, float vd)
+{
+	float v = vd / l * l;
+	terrain[id.xy] += float4(0.0f, v, 0.0f, 0.0f);
+}
+
+//calculate velocity field
+void computeVelocity(uint3 id, float pv)
+{
+	float vx = ((flux[uint2(id.x - 1, id.y)].y - flux[id.xy].x) + (flux[id.xy].y - flux[uint2(id.x + 1, id.y)].x)) / 2.0f;
+	float vy = ((flux[uint2(id.x, id.y - 1)].z - flux[id.xy].w) + (flux[id.xy].z - flux[uint2(id.x, id.y + 1)].w)) / 2.0f;
+
+	float v = (pv + terrain[id.xy].g) / 2;
+	v *= l;
+
+	vx = vx / v;
+	vy = vy / v;
+
+	velocityField[id.xy] = float2(vx, vy);
+}
+
+
+[numthreads(32,32,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	float4 n = acquireNeighbor(id);
+	float vd = computeVolumeDiff(id, n);
+	float pv = terrain[id.xy].g;
+	computeNewHeight(id, vd);
+	computeVelocity(id, pv);
+}
