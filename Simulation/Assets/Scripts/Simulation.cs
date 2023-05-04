@@ -187,6 +187,7 @@ public class Simulation : MonoBehaviour
         calculateFlux.SetFloat("g", gravity);
         calculateFlux.SetFloat("l", length);
         calculateFlux.SetFloat("scale", elevation);
+        calculateFlux.SetFloat("size", mapsize);
 
         calculateFlux.Dispatch(0, terrain.width / 32, terrain.height / 32, 1);
     }
@@ -199,6 +200,7 @@ public class Simulation : MonoBehaviour
         simulateWater.SetFloat("l", length);
         simulateWater.SetFloat("dTime", dTime);
         simulateWater.SetFloat("scale", elevation);
+        simulateWater.SetFloat("size", mapsize);
 
         simulateWater.Dispatch(0, terrain.width / 32, terrain.height / 32, 1);
     }
@@ -209,6 +211,7 @@ public class Simulation : MonoBehaviour
         erode.SetTexture(0, "terrain", terrain);
         erode.SetFloat("sedimentCapConst", sedimentCap);
         erode.SetFloat("l", length);
+        erode.SetFloat("size", mapsize);
 
         erode.Dispatch(0, terrain.width / 32, terrain.height / 32, 1);
     }

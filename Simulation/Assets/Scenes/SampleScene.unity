@@ -366,7 +366,7 @@ MonoBehaviour:
   waterIncrease: 0.0999
   length: 1
   dTime: 0.022
-  sedimentCap: 0.1
+  sedimentCap: 0.01
   evaporationScale: 0.5
   terrain: {fileID: 0}
   flux: {fileID: 0}

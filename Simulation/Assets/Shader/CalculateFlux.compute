@@ -18,14 +18,28 @@ float l;
 //current elevation scale
 float scale;
 
+float size;
+
 //calculate height difference
 float4 computeHeightDiff(uint3 id)
 {
+	uint2 gl = uint2(id.x - 1, id.y);
+	gl.x = clamp(gl.x, 0, size - 1);
+
+	uint2 gr = uint2(id.x + 1, id.y);
+	gr.x = clamp(gr.x, 0, size - 1);
+
+	uint2 gt = uint2(id.x, id.y + 1);
+	gt.y = clamp(gt.y, 0, size - 1);
+
+	uint2 gb = uint2(id.x, id.y - 1);
+	gb.y = clamp(gb.y, 0, size - 1);
+
 	float2 t = float2(terrain[id.xy].r, terrain[id.xy].g);
-	float2 tl = float2(terrain[uint2(id.x - 1, id.y)].r, terrain[uint2(id.x - 1, id.y)].g);
-	float2 tr = float2(terrain[uint2(id.x + 1, id.y)].r, terrain[uint2(id.x + 1, id.y)].g);
-	float2 tt = float2(terrain[uint2(id.x, id.y + 1)].r, terrain[uint2(id.x, id.y + 1)].g);
-	float2 tb = float2(terrain[uint2(id.x, id.y - 1)].r, terrain[uint2(id.x, id.y - 1)].g);
+	float2 tl = float2(terrain[gl].r, terrain[gl].g);
+	float2 tr = float2(terrain[gr].r, terrain[gr].g);
+	float2 tt = float2(terrain[gt].r, terrain[gt].g);
+	float2 tb = float2(terrain[gb].r, terrain[gb].g);
 
 	float hl = (t.y + t.x) - tl.x - tl.y;
 	float hr = (t.y + t.x) - tr.x - tr.y;

@@ -7,13 +7,19 @@ RWTexture2D<float4> terrain;
 float sedimentCapConst;
 float l;
 
-
+float size;
 
 float computeAngle(uint3 id)
 {
+	uint2 gl = uint2(id.x - 1, id.y);
+	gl.x = clamp(gl.x, 0, size - 1);
+
+	uint2 gr = uint2(id.x + 1, id.y);
+	gr.x = clamp(gr.x, 0, size - 1);
+
 	float h = terrain[uint2(id.x, id.y)].r;//heights for center, left and right cells
-	float hl = terrain[uint2(id.x - 1, id.y)].r;
-	float hr = terrain[uint2(id.x + 1, id.y)].r;
+	float hl = terrain[gl].r;
+	float hr = terrain[gr].r;
 	float dl = h - hl;//diffrence between center and left
 	float dr = h - hr;//diffrence between center and right
 
@@ -21,7 +27,7 @@ float computeAngle(uint3 id)
 	{
 		if (hl != 0)
 		{
-			return atan(dl / l);
+			return degrees(atan(dl / l));
 		}
 		else
 		{
@@ -32,16 +38,16 @@ float computeAngle(uint3 id)
 	{
 		if (dl > dr)
 		{
-			return atan(dl / l);
+			return degrees(atan(dl / l));
 		}
 		else
 		{
-			return atan(dr / l);
+			return degrees(atan(dr / l));
 		}
 	}
 	else
 	{
-		return atan(dr / l);
+		return degrees(atan(dr / l));
 	}
 
 	return 0;

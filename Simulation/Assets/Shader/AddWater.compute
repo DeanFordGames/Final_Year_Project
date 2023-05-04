@@ -36,7 +36,7 @@ float waterSource(uint3 id)
 	return w;
 }
 
-float percipitation(uint3 id)
+float precipitation(uint3 id)
 {
 	float w = 0;
 	if(terrain[id.xy].r > 0.9)
@@ -48,6 +48,6 @@ float percipitation(uint3 id)
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
 	//terrain[id.xy] += float4(0, waterSource(id), 0, 0);
-	//terrain[id.xy] += float4(0, addRain(id), 0, 0);
-	terrain[id.xy] += float4(0, percipitation(id), 0, 0);
+	terrain[id.xy] += float4(0, addRain(id), 0, 0);
+	//terrain[id.xy] += float4(0, precipitation(id), 0, 0);
 }
