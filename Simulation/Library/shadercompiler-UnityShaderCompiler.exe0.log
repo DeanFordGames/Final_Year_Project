@@ -1,73 +1,13 @@
 Base path: 'C:/Program Files/Unity/Hub/Editor/2019.4.36f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.4.36f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
 Cmd: preprocessCompute
-  insize=1194 outsize=1193 ok=1
+  insize=1910 outsize=1909 ok=1
 Cmd: compileComputeKernel
-  api=4 insize=1193 outsize=756 ok=1
+  api=4 insize=1909 outsize=1706 ok=1
 Cmd: preprocessCompute
-  insize=1194 outsize=1193 ok=1
+  insize=1880 outsize=1879 ok=1
 Cmd: compileComputeKernel
-  api=4 insize=1193 outsize=644 ok=1
-Cmd: preprocessCompute
-  insize=1873 outsize=1872 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=1872 outsize=1618 ok=1
-Cmd: preprocessCompute
-  insize=1923 outsize=1922 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=1922 outsize=1618 ok=1
-Cmd: preprocessCompute
-  insize=2197 outsize=2196 ok=1
-Cmd: compileComputeKernel
-  error: 2 plat 4 at WaterSimulation.compute(65): undeclared identifier 'size'
-  api=4 insize=2196 outsize=0 ok=0
-Cmd: preprocessCompute
-  insize=2016 outsize=2015 ok=1
-Cmd: compileComputeKernel
-  error: 2 plat 4 at CalculateFlux.compute(39): invalid subscript 'b'
-  api=4 insize=2015 outsize=0 ok=0
-Cmd: preprocessCompute
-  insize=2197 outsize=2196 ok=1
-Cmd: compileComputeKernel
-  error: 2 plat 4 at WaterSimulation.compute(65): undeclared identifier 'size'
-  api=4 insize=2196 outsize=0 ok=0
-Cmd: preprocessCompute
-  insize=2016 outsize=2015 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=2015 outsize=1706 ok=1
-Cmd: preprocessCompute
-  insize=2212 outsize=2211 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=2211 outsize=1548 ok=1
-Cmd: preprocessCompute
-  insize=2052 outsize=2051 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=2051 outsize=1980 ok=1
+  api=4 insize=1879 outsize=1706 ok=1
 Cmd: preprocessCompute
   insize=1876 outsize=1875 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=1875 outsize=1746 ok=1
-Cmd: preprocessCompute
-  insize=1666 outsize=1665 ok=1
-Cmd: compileComputeKernel
-  error: 2 plat 4 at Erosion.compute(24): undeclared identifier 'rad2deg'
-  api=4 insize=1665 outsize=0 ok=0
-Cmd: preprocessCompute
-  insize=1666 outsize=1665 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=1665 outsize=4343 ok=1
-Cmd: preprocessCompute
-  insize=1693 outsize=1692 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=1692 outsize=4411 ok=1
-Cmd: preprocessCompute
-  insize=1194 outsize=1193 ok=1
-Cmd: preprocessCompute
-  insize=1801 outsize=1800 ok=1
-Cmd: compileComputeKernel
-  error: 2 plat 4 at Erosion.compute(15): undeclared identifier 'size'
-  api=4 insize=1800 outsize=0 ok=0
-Cmd: preprocessCompute
-  insize=1812 outsize=1811 ok=1
-Cmd: compileComputeKernel
-  api=4 insize=1811 outsize=4539 ok=1
+Cmd: shutdown

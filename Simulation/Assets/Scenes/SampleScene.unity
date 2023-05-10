@@ -363,11 +363,12 @@ MonoBehaviour:
   mapsize: 1280
   scale: 20
   elevation: 7
+  animateWater: 1
   waterIncrease: 0.0999
-  length: 1
-  dTime: 0.022
-  sedimentCap: 0.01
-  evaporationScale: 0.5
+  evaporationScale: 0.8
+  sedimentCap: 0.05
+  dissolvingConst: 0.05
+  depositionConst: 0.5
   terrain: {fileID: 0}
   flux: {fileID: 0}
   velocityField: {fileID: 0}

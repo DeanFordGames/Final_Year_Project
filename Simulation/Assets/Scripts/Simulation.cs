@@ -4,41 +4,61 @@ using UnityEngine;
 
 public class Simulation : MonoBehaviour
 {
-    public int mapsize = 255;
-    //size in width and length of terrain
-    public int scale = 20;
-    //size in height of terrain
-    public float elevation = 10;
-    //how much water gets added through rain or source
-    public float waterIncrease = 0.03f;
+    [Header("Map Generation Variables")]
+    [SerializeField]
+    private int mapsize = 255;
+    [SerializeField]//size in width and length of terrain
+    private int scale = 20;
+    [SerializeField]//size in height of terrain
+    private float elevation = 10;
+    [Header("Water Variables")]
+    [SerializeField]
+    private bool animateWater = true;
+    [SerializeField]//how much water gets added through rain or source
+    private float waterIncrease = 0.03f;
     //length of pipes connecting cells
-    public float length = 1f;
+    private float length = 1f;
     //area of pipes
     private float crossSection = 1f;
     //no idea what this imaginary thing is
     private float gravity = 9.81f;
+    [SerializeField]//water evaporation scale
+    private float evaporationScale = 0.1f;
     //delta time-time step
-    public float dTime = 0.022f;
-    //sediment maximum capacity
-    public float sedimentCap = 0.1f;
-    //water evaporation scale
-    public float evaporationScale = 0.1f;
+    private float dTime = 0.022f;
+    [Header("Erosion Variables")]
+    [SerializeField]//sediment maximum capacity
+    private float sedimentCap = 0.1f;
+    [SerializeField]
+    private float dissolvingConst = 0.5f;
+    [SerializeField]
+    private float depositionConst = 0.5f;
 
-    //r = terrain map | g = water map | b = sediment
-    public RenderTexture terrain;
-    //r = left pipe | g = right pipe | b = top pipe | a = bottom pipe
-    public RenderTexture flux;
-    //r or g = x | b or a = y
-    public RenderTexture velocityField;
-    public RenderTexture normalMap;
+    [Header("Render Texture")]
+    [SerializeField]//r = terrain map | g = water map | b = sediment
+    private RenderTexture terrain;
+    [SerializeField]//r = left pipe | g = right pipe | b = top pipe | a = bottom pipe
+    private RenderTexture flux;
+    [SerializeField]//r or g = x | b or a = y
+    private RenderTexture velocityField;
+    [SerializeField]
+    private RenderTexture normalMap;
 
-    public ComputeShader calculateNormal;
-    public ComputeShader addWater;
-    public ComputeShader calculateFlux;
-    public ComputeShader simulateWater;
-    public ComputeShader erode;
-    public ComputeShader transport;
-    public ComputeShader evaporate;
+    [Header("Compute Shader")]
+    [SerializeField]
+    private ComputeShader calculateNormal;
+    [SerializeField]
+    private ComputeShader addWater;
+    [SerializeField]
+    private ComputeShader calculateFlux;
+    [SerializeField]
+    private ComputeShader simulateWater;
+    [SerializeField]
+    private ComputeShader erode;
+    [SerializeField]
+    private ComputeShader transport;
+    [SerializeField]
+    private ComputeShader evaporate;
 
     Mesh terrainMesh;
     MeshFilter terrainMeshFilter;
@@ -66,6 +86,10 @@ public class Simulation : MonoBehaviour
             InitializeTextures();
             InitializeMesh();
         }
+        if (animateWater == true)
+            terrainMat.SetInt("_AnimateWater", 1);
+        else
+            terrainMat.SetInt("_AnimateWater", 0);
         UpdateShaders();
     }
 
@@ -74,6 +98,7 @@ public class Simulation : MonoBehaviour
         //send textures to normal map shader and start shader
         calculateNormal.SetTexture(0, "normalMap", normalMap);
         calculateNormal.SetTexture(0, "heightMap", terrain);
+        calculateNormal.SetBool("includeWater", animateWater);
         calculateNormal.Dispatch(0, normalMap.width / 32, normalMap.height / 32, 1);
         //send updated maps to shader for vertex displacement and lighting
         terrainMat.SetTexture("_Displacement", terrain);
@@ -210,8 +235,11 @@ public class Simulation : MonoBehaviour
         erode.SetTexture(0, "velocity", velocityField);
         erode.SetTexture(0, "terrain", terrain);
         erode.SetFloat("sedimentCapConst", sedimentCap);
+        erode.SetFloat("dissolvingConst", dissolvingConst);
+        erode.SetFloat("depositionConst", depositionConst);
         erode.SetFloat("l", length);
         erode.SetFloat("size", mapsize);
+
 
         erode.Dispatch(0, terrain.width / 32, terrain.height / 32, 1);
     }

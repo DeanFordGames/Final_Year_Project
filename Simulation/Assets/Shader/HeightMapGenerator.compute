@@ -94,6 +94,6 @@ void CSMain (uint3 id : SV_DispatchThreadID)
         s *= lacunarity;
         weight *= weightScaler;
     }
-    noise /= 1.28f;
+    noise /= 1.28f;// to make sure values are not max value to stop flat tops tip of mountain
     map[id.xy] = float4(noise, 0.0f, 0.0f, 0.0f);
 }

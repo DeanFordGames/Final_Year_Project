@@ -5,17 +5,21 @@ RWTexture2D<float4> terrain;
 
 
 float sedimentCapConst;
+float dissolvingConst;
+float depositionConst;
 float l;
 
 float size;
 
-float computeAngle(uint3 id)
+float computeAngle(uint3 id, uint2 axis)
 {
-	uint2 gl = uint2(id.x - 1, id.y);
+	uint2 gl = uint2(id.x, id.y) - axis;
 	gl.x = clamp(gl.x, 0, size - 1);
+	gl.y = clamp(gl.y, 0, size - 1);
 
-	uint2 gr = uint2(id.x + 1, id.y);
+	uint2 gr = uint2(id.x, id.y) + axis;
 	gr.x = clamp(gr.x, 0, size - 1);
+	gr.y = clamp(gr.y, 0, size - 1);
 
 	float h = terrain[uint2(id.x, id.y)].r;//heights for center, left and right cells
 	float hl = terrain[gl].r;
@@ -55,23 +59,25 @@ float computeAngle(uint3 id)
 
 void dissolveSediment(uint3 id, float c)
 {
-	if (c > terrain[id.xy].b)
+	if (c > terrain[id.xy].z)
 	{
-		terrain[id.xy] -= float4(sedimentCapConst * (c - terrain[id.xy].b), 0, 0, 0);
-		terrain[id.xy] += float4(0, 0, sedimentCapConst * (c - terrain[id.xy].b), 0);
+		terrain[id.xy] -= float4(dissolvingConst * (c - terrain[id.xy].b), 0, 0, 0);
+		terrain[id.xy] += float4(0, 0, dissolvingConst * (c - terrain[id.xy].b), 0);
 	}
-	else if (c <= terrain[id.xy].b)
+	else if (c <= terrain[id.xy].z)
 	{
-		terrain[id.xy] += float4(sedimentCapConst * (terrain[id.xy].b - c), 0, 0, 0);
-		terrain[id.xy] -= float4(0, 0, sedimentCapConst * (terrain[id.xy].b - c), 0);
+		terrain[id.xy] += float4(depositionConst * (terrain[id.xy].b - c), 0, 0, 0);
+		terrain[id.xy] -= float4(0, 0, depositionConst * (terrain[id.xy].b - c), 0);
 	}
 }
 
 [numthreads(32,32,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-	terrain[id.xy] = float4(terrain[id.xy].x, terrain[id.xy].y, terrain[id.xy].w, terrain[id.xy].w);
-	float a = computeAngle(id);
+	float ax = computeAngle(id, uint2(1, 0));
+	float ay = computeAngle(id, uint2(0, 1));
+	float a = ax + ay / 2;
+
 	float c = sedimentCapConst * sin(a) * sqrt((velocity[id.xy].x * velocity[id.xy].x) + (velocity[id.xy].y * velocity[id.xy].y));
 	dissolveSediment(id, c);
 	terrain[id.xy] = float4(terrain[id.xy].x, terrain[id.xy].y, terrain[id.xy].z, terrain[id.xy].z);

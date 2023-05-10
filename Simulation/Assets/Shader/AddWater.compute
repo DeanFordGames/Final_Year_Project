@@ -39,7 +39,7 @@ float waterSource(uint3 id)
 float precipitation(uint3 id)
 {
 	float w = 0;
-	if(terrain[id.xy].r > 0.9)
+	if(terrain[id.xy].r > 0.8)
 		w += waterIncrease * dTime;
 	return w;
 }

@@ -15,8 +15,6 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 
 	float x0 = floor(newPos.x);
 	float y0 = floor(newPos.y);
-	//float x1 = x0 + 1;
-	//float y1 = y0 + 1;
 
 	float dx = newPos.x - x0;
 	float dy = newPos.y - y0;
@@ -29,8 +27,6 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 
 	x0 = clamp(x0, 0, size - 1);
 	y0 = clamp(y0, 0, size - 1);
-	//x1 = clamp(x1, 0, size - 1);
-	//y1 = clamp(y1, 0, size - 1);
 
 	uint2 pos = uint2(uint(x0), uint(y0));
 

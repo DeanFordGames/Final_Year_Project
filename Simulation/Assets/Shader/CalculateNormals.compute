@@ -6,13 +6,22 @@
 RWTexture2D<float4> heightMap;
 RWTexture2D<float3> normalMap;
 
+bool includeWater;
+
 [numthreads(32,32,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-    float hl = heightMap[uint2(id.x - 1, id.y)].r + heightMap[uint2(id.x - 1, id.y)].g;
-    float hr = heightMap[uint2(id.x + 1, id.y)].r + heightMap[uint2(id.x + 1, id.y)].g;
-    float hu = heightMap[uint2(id.x, id.y + 1)].r + heightMap[uint2(id.x, id.y + 1)].g;
-    float hd = heightMap[uint2(id.x, id.y - 1)].r + heightMap[uint2(id.x, id.y - 1)].g;
+    float hl = heightMap[uint2(id.x - 1, id.y)].r;
+    float hr = heightMap[uint2(id.x + 1, id.y)].r;
+    float hu = heightMap[uint2(id.x, id.y + 1)].r;
+    float hd = heightMap[uint2(id.x, id.y - 1)].r;
+    if (includeWater == true)
+    {
+        hl += heightMap[uint2(id.x - 1, id.y)].g;
+        hr += heightMap[uint2(id.x + 1, id.y)].g;
+        hu += heightMap[uint2(id.x, id.y + 1)].g;
+        hd += heightMap[uint2(id.x, id.y - 1)].g;
+    }
 
     float3 vu = float3(0, hu, 1);
     float3 vr = float3(1, hr, 0);

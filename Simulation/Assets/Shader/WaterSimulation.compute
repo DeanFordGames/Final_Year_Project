@@ -47,8 +47,8 @@ void computeNewHeight(uint3 id, float vd)
 //calculate velocity field
 void computeVelocity(uint3 id, float pv, uint2 gl, uint2 gr, uint2 gt, uint2 gb)
 {
-	float vx = ((flux[uint2(id.x - 1, id.y)].y - flux[id.xy].x) + (flux[id.xy].y - flux[uint2(id.x + 1, id.y)].x)) / 2.0f;
-	float vy = ((flux[uint2(id.x, id.y - 1)].z - flux[id.xy].w) + (flux[id.xy].z - flux[uint2(id.x, id.y + 1)].w)) / 2.0f;
+	float vx = ((flux[gl].y - flux[id.xy].x) + (flux[id.xy].y - flux[gr].x)) / 2.0f;
+	float vy = ((flux[gb].z - flux[id.xy].w) + (flux[id.xy].z - flux[gt].w)) / 2.0f;
 
 	float v = (pv + terrain[id.xy].g) / 2;
 	v *= l;
