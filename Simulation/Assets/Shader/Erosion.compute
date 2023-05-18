@@ -1,0 +1,69 @@
+﻿#pragma kernel CSMain
+
+RWTexture2D<float2> velocity;
+RWTexture2D<float4> terrain;
+
+
+float sedimentCapConst;
+float dissolvingConst;
+float depositionConst;
+float scalar;
+float l;
+
+float size;
+
+float computeAngle(uint3 id, uint2 axis)
+{
+	uint2 gl = uint2(id.x, id.y) - axis;
+	gl.x = clamp(gl.x, 0, size - 1);
+	gl.y = clamp(gl.y, 0, size - 1);
+
+	uint2 gr = uint2(id.x, id.y) + axis;
+	gr.x = clamp(gr.x, 0, size - 1);
+	gr.y = clamp(gr.y, 0, size - 1);
+
+	float h = terrain[uint2(id.x, id.y)].r;//heights for center, left and right cells
+	float hl = terrain[gl].r;
+	float hr = terrain[gr].r;
+	float dl = h - hl;//diffrence between center and left
+	float dr = h - hr;//diffrence between center and right
+
+	if (dl > dr)
+	{
+		return degrees(atan(dl / l));
+	}
+	else
+	{
+		return degrees(atan(dr / l));
+	}
+
+	return 0;
+}
+
+void dissolveSediment(uint3 id, float c)
+{
+	if (c > terrain[id.xy].z)
+	{
+		terrain[id.xy] -= float4(dissolvingConst * (c - terrain[id.xy].z), 0, 0, 0);
+		terrain[id.xy] += float4(0, 0, dissolvingConst * (c - terrain[id.xy].z), 0);
+	}
+	else if (c <= terrain[id.xy].z)
+	{
+		terrain[id.xy] += float4(depositionConst * (terrain[id.xy].z - c), 0, 0, 0);
+		terrain[id.xy] -= float4(0, 0, depositionConst * (terrain[id.xy].z - c), 0);
+	}
+}
+
+[numthreads(32,32,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	float ax = computeAngle(id, uint2(1, 0));
+	float ay = computeAngle(id, uint2(0, 1));
+	float a = (ax + ay) / 2.0;
+
+	float c = sedimentCapConst * sin(a) * (sqrt((velocity[id.xy].x * velocity[id.xy].x) + (velocity[id.xy].y * velocity[id.xy].y)));
+	if (c < scalar)
+		c = scalar;
+	dissolveSediment(id, c);
+	terrain[id.xy] = float4(terrain[id.xy].x, terrain[id.xy].y, terrain[id.xy].z, terrain[id.xy].z);
+}
